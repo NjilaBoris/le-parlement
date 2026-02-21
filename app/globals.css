@@ -12,6 +12,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-spaceGrotesk: var(--font-spaceGrotesk);
+  --font-satoshi: "Satoshi", sans-serif;
   --font-inter: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -119,4 +121,33 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.ttf") format("truetype-variations");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+.menu-item {
+  position: absolute;
+  width: 20px;
+  height: 1.5px;
+  transition-property: transform;
+  transition: all 250ms ease-out;
+  background: #cc0000;
+  border-radius: 1px;
+}
+.menu-hamburger-icon.open .menu-item {
+  background: white;
+}
+.menu-hamburger-icon.open .menu-item:first-child {
+  transform: rotate(45deg);
+  transform-origin: 5px;
+}
+
+.menu-hamburger-icon.open .menu-item:nth-child(2) {
+  transform: rotate(-45deg);
+  transform-origin: 6px;
 }
