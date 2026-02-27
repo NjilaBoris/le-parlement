@@ -3,6 +3,7 @@ import { Geist, Inter, Space_Grotesk } from "next/font/google";
 
 import "./globals.css";
 import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Nav />
         <main className="flex flex-col font-satoshi w-full h-full pt-23 lg:pt-30">
           {children}
+          <Footer />
         </main>
       </body>
     </html>

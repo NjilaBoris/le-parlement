@@ -20,12 +20,12 @@ export const navItems = [
     label: "Local Governace",
   },
   {
-    route: "/economy-and-society",
+    route: "/economy-society",
     label: "Economy & Society",
   },
   {
-    route: "/youth-sportlight",
-    label: "Youth Sportlight",
+    route: "/youth-spotlight",
+    label: "Youth Spotlight",
   },
   {
     route: "/opinions",
