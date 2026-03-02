@@ -12,7 +12,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#06142A] text-gray-300 font-inter">
+    <footer className="bg-[#06142A] text-gray-300 h-full w-full font-inter">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1  lg:grid-cols-5 gap-18 lg:gap-9">
           {/* ================= Newsletter ================= */}
@@ -26,8 +26,8 @@ export default function Footer() {
 
             <p className="text-xs text-gray-400 tracking-wider leading-relaxed mb-6">
               Stay updated on the latest happenings in the Africa. Whether it's
-              business, politics, fashion, tech or finance, we deliver it in a
-              flash—straight to your inbox.
+              elections, politics, parliament, economy & society, we deliver it
+              in a flash—straight to your inbox.
             </p>
 
             <div className="flex w-full items-center p-1 rounded-md  border-2  border-gray-700  max-w-md ">
