@@ -1,7 +1,7 @@
 "use client";
 import { createPostSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -14,7 +14,14 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+});
 const PostForm = () => {
+  const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
@@ -129,9 +136,10 @@ const PostForm = () => {
                 Content <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  className=" text-neutral-500   no-focus min-h-[45px] border"
-                  {...field}
+                <Editor
+                  editorRef={editorRef}
+                  value={field.value}
+                  fieldChange={field.onChange}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-1">

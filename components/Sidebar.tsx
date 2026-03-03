@@ -16,7 +16,7 @@ const Sidebar = () => {
     },
   ];
   return (
-    <div className="hidden md:flex h-screen w-64 flex-col border-r border-gray-200 bg-white p-6">
+    <div className="hidden lg:flex sticky top-0 h-screen w-64 flex-col border-r border-gray-200 bg-white p-6">
       <nav className="flex flex-col gap-3 mt-4">
         {sidebarLinks.map((item) => {
           const isActive =

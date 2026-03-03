@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 const AdminNav = () => {
   return (
-    <div className="h-full w-full md:hidden border-red-100 border-b py-5">
+    <div className="h-full w-full lg:hidden border-red-100 border-b py-5">
       <div className="flex items-center justify-between w-[90%] mx-auto h-full">
         <Link href="/">
           <div className="flex items-center   gap-1 font-inter">
