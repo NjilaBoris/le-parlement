@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Inter, Space_Grotesk } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
+import { auth } from "@/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,18 +26,22 @@ export const metadata: Metadata = {
   icons: "/Group.svg",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} font-satoshi  ${inter.variable} ${spaceGrotesk.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <SessionProvider session={session}>
+        <body
+          className={`${geistSans.variable} font-satoshi  ${inter.variable} ${spaceGrotesk.variable} antialiased`}
+        >
+          {children}
+          <Toaster />
+        </body>
+      </SessionProvider>
     </html>
   );
 }

@@ -41,7 +41,7 @@ interface Props {
 const Editor = ({ value, editorRef, fieldChange }: Props) => {
   return (
     <MDXEditor
-      className="bg-[#f4f6f8] markdown-editor dark-editor light-border-2 h-full min-h-full !max-w-full  grid w-full border-1"
+      className="bg-[#f4f6f8]  markdown-editor dark-editor light-border-2 h-full min-h-full !max-w-full  grid w-full border-1"
       markdown={value}
       onChange={fieldChange}
       ref={editorRef}

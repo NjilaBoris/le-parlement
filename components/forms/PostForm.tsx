@@ -1,7 +1,7 @@
 "use client";
-import { createPostSchema } from "@/validations";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useRef } from "react";
+import React, { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -16,75 +16,57 @@ import { Input } from "../ui/input";
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
+import { AskQuestionSchema } from "@/validations";
+import { Button } from "../ui/button";
+import { IconReload } from "@tabler/icons-react";
+
+import { ACCEPTED_IMAGE_TYPES } from "@/constant";
+import { ImageIcon } from "lucide-react";
+import FileUploader from "../FileUploader";
+import { z } from "zod";
+import { createArticle } from "@/lib/actions/article.action";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
+
 const PostForm = () => {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const editorRef = useRef<MDXEditorMethods>(null);
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm({
-    resolver: zodResolver(createPostSchema),
+    resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
       title: "",
       content: "",
       category: "",
-      createdAt: "",
-      image: "",
-      userFirstName: "",
-      userLastName: "",
+      image: undefined,
     },
   });
-  const handleCreatePost = () => {};
+
+  const handleCreatePost = async (data: z.infer<typeof AskQuestionSchema>) => {
+    startTransition(async () => {
+      const result = await createArticle(data);
+      if (result.success) {
+        toast.success("Article created successfully!");
+        form.reset();
+        if (result.data) router.push(ROUTES.ARTICLES(result.data._id));
+      } else {
+        toast.error(result.error?.message || "Failed to create article.");
+      }
+    });
+  };
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleCreatePost)}
         className="flex w-full flex-col gap-10"
       >
-        <div className="flex flex-col md:flex-row gap-5">
-          <FormField
-            control={form.control}
-            name="userFirstName"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="paragraph-semibold text-sm md:text-base text-neutral-500">
-                  FirstName <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="paragraph-regular text-neutral-500   no-focus min-h-[45px] border"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription className="body-regular mt-1">
-                  Enter the author&apos;s first name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="userLastName"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="paragraph-semibold text-sm md:text-base text-neutral-500">
-                  LastName <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="paragraph-regular text-neutral-500   no-focus min-h-[45px] border"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription className="body-regular mt-1">
-                  Enter the author&apos;s last name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
           name="title"
@@ -129,6 +111,23 @@ const PostForm = () => {
         />
         <FormField
           control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FileUploader
+              value={field.value}
+              fieldChange={field.onChange}
+              label="Cover Image"
+              acceptTypes={ACCEPTED_IMAGE_TYPES}
+              icon={ImageIcon}
+              placeholder="Click to upload cover image"
+              hint="This image will be displayed as the cover for your blog post."
+              disabled={isSubmitting}
+            />
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="content"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
@@ -149,67 +148,22 @@ const PostForm = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
-              <FormLabel className="paragraph-semibold text-sm md:text-base text-neutral-700">
-                Upload Image <span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <div className="flex flex-col gap-3">
-                  {/* Hidden File Input */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    id="imageUpload"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      field.onChange(file); // send file to react-hook-form
-                    }}
-                  />
-                  <label
-                    htmlFor="imageUpload"
-                    className="flex cursor-pointer items-center justify-center rounded-lg border border-dashed border-blue-400 bg-blue-50 px-4 py-6 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
-                  >
-                    Click to upload image
-                  </label>
-                </div>
-              </FormControl>
-              <FormDescription className="body-regular mt-1">
-                Upload a featured image for your post.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="createdAt"
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
-              <FormLabel className="paragraph-semibold text-sm md:text-base text-neutral-700">
-                Created Date
-              </FormLabel>
-
-              <FormControl>
-                <Input
-                  type="date"
-                  className="min-h-[45px] bg-gray-100 text-gray-600 cursor-not-allowed"
-                  {...field}
-                />
-              </FormControl>
-
-              <FormDescription className="body-regular mt-1">
-                This is the date the article was created.
-              </FormDescription>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="mt-16 flex justify-end">
+          <Button
+            type="submit"
+            disabled={isPending}
+            className=" p-4 bg-blue-600 hover:bg-blue-500 w-fit !text-light-900"
+          >
+            {isPending ? (
+              <>
+                <IconReload className="mr-2 size-4 animate-spin" />
+                <span>Submitting</span>
+              </>
+            ) : (
+              <>Post a Article</>
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
